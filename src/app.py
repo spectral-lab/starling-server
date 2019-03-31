@@ -8,9 +8,11 @@ from skimage.segmentation import random_walker
 from skimage.data import binary_blobs
 from skimage.exposure import rescale_intensity
 import skimage
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, make_response
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 
 @app.route('/', methods=["POST"])
 def handler():
@@ -19,7 +21,7 @@ def handler():
     image_data = Image.open(io.BytesIO(uploaded_img))
     labels = segmentize(image_data)
     print(labels)
-    ret = convert_to_json(labels)
+    ret = make_response(convert_to_json(labels))
     print(ret)
     return ret
 
