@@ -4,13 +4,13 @@ task_definition:
   ecs_network_mode: awsvpc
   task_size:
     mem_limit: 8GB
-    cpu_limit: 256
+    cpu_limit: 1024
 run_params:
   network_configuration:
     awsvpc_configuration:
       subnets:
-        - "subnet-07376191972c7caeb"
-        - "subnet-06282e2bd296bb88a"
+        - "subnet-0d93e358294294f5a"
+        - "subnet-07dd39fcc80b7ed86"
       security_groups:
-        - "sg-0159b8f98a5a918ec"
+        - "sg-0010a7ba8aa21b6f3"
       assign_public_ip: ENABLED
