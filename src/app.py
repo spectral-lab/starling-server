@@ -26,9 +26,9 @@ def handler():
     print(im)
     labels = segmentize(im)
     print(labels)
-    partials = detect_partials(im, labels)
-    print(partials)
-    ret = make_response(convert_to_json(partials))
+    partials_positions = detect_partials(im, labels)
+    print(partials_positions)
+    ret = make_response(convert_to_json(partials_positions))
     print('returns')
     print(ret)
     return ret
@@ -52,6 +52,7 @@ def detect_partials(spectrogram2d, labels):
     freqs = librosa.fft_frequencies()
     time_grid, freq_grid = np.meshgrid(times, freqs)
     partials = []
+    partials_positions = []
     print('number of segments')
     print(labels.max())
     for i in range(labels.max()):
@@ -61,9 +62,10 @@ def detect_partials(spectrogram2d, labels):
             dict(time=time_grid[position], freq=freq_grid[position], amp=spectrogram2d[position])
             for position in partial_positions
         ]
+        partials_positions.append(partial_positions)
         partials.append(partial)
     print('got partials')
-    return partials
+    return partials_positions
 
 
 def find_partial_in_segment(spectrogram2d, segment):
@@ -75,7 +77,7 @@ def find_partial_in_segment(spectrogram2d, segment):
         is_segment = segment[:, column_idx]
         max_val = amp_column[is_segment].max()
         row_idx = np.where(amp_column == max_val)[0][0]
-        partial_positions.append((row_idx, column_idx))
+        partial_positions.append([int(row_idx), int(column_idx)])
     return partial_positions
 
 
