@@ -20,8 +20,8 @@ CORS(app)
 def handler():
     print('got request')
     uploaded_img = request.data
-    image_data = Image.open(io.BytesIO(uploaded_img)).convert('F')
-    im = np.array(image_data)
+    image_data = Image.open(io.BytesIO(uploaded_img)).convert('L')
+    im = np.array(image_data) / 255.
     print('got image as array')
     print(im)
     labels = segmentize(im)
