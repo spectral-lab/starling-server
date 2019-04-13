@@ -1,6 +1,11 @@
 import numpy as np
 from typing import List
 
+"""
+Detect Peaks in segments of spectrogram. 
+Return List is [row, column] pairs splitted into some chunks which represents a peak line.
+"""
+
 
 def detect_peaks(spectrogram2d: np.ndarray, labels: np.ndarray) -> List[List[List[int]]]:
     peak_points = []

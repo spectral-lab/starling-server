@@ -3,6 +3,11 @@ from skimage.filters import gaussian
 from skimage.measure import label
 import numpy as np
 
+"""
+Segmentize spectrogram image. return labels which indicates background as -1 and foreground as index starts from 0 
+"""
+
+
 def segmentize(img: np.ndarray, line_continuity: int, peak_level: float, background_level: float) -> np.ndarray:
     smoothed_img = gaussian(img, sigma=(line_continuity * 2, line_continuity * 0.1))
     markers = np.zeros(smoothed_img.shape, dtype=np.uint)
