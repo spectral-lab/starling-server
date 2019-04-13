@@ -11,19 +11,22 @@ import io
 from flask import Flask, request, jsonify, make_response
 from flask_cors import CORS
 from modules import segmentize, format_check, detect_peaks
+from librosa.core import db_to_power
 
 print('Successfully imported')
 
 app = Flask(__name__)
 CORS(app)
 
-line_continuity = 0
-peak_level = 0.0001
-background_level = 0.0000001
+
 
 
 @app.route('/', methods=["POST"])
 def handler():
+    line_continuity = 1
+    peak_level = db_to_power(-30)
+    background_level = db_to_power(-35)
+    print(peak_level, background_level)
     print('Success: Got request')
     uploaded_img = request.data
     image_data = Image.open(io.BytesIO(uploaded_img)).convert('L')
