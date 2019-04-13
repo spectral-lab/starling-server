@@ -1,15 +1,25 @@
+import sys
+import os
+
+__dirname = os.path.dirname(__file__)
+sys.path.append(os.path.normpath(os.path.join(__dirname, "/modules")))
+
+PACKAGE_PARENT = '..'
 from PIL import Image
-import numpy as np
 from skimage import img_as_float
 import io
 from flask import Flask, request, jsonify, make_response
 from flask_cors import CORS
-from .modules import segmentize, detect_peaks, format_check
+from modules import segmentize, format_check, detect_peaks
 
 print('Successfully imported')
 
 app = Flask(__name__)
 CORS(app)
+
+line_continuity = 0
+peak_level = 0.0001
+background_level = 0.0000001
 
 
 @app.route('/', methods=["POST"])
@@ -19,19 +29,19 @@ def handler():
     image_data = Image.open(io.BytesIO(uploaded_img)).convert('L')
     img = img_as_float(image_data) / 255.
     check_result = format_check(img)
-    if not check_result.is_ok:
+    if not check_result["is_ok"]:
+        print("bad format")
         print(check_result)
         return check_result['msg']
     print('Success: Converted into ndarray')
-    labels = segmentize(img)
-    print('Success: Segmentized with ' + (labels.max()+1) + " segments")
+    labels = segmentize(img, line_continuity, peak_level, background_level)
+    print('Success: Segmentized with ' + str(labels.max() + 1) + " segments")
     peak_points = detect_peaks(img, labels)
-    print('Success: Detected ' + peak_points.size[0] + 'peaks')
+    print('Success: Detected ' + str(len(peak_points)) + ' peaks')
     ret = make_response(convert_to_json(peak_points))
-    print('Success: Returns' + ret)
+    print('Success: Returns ' + str(peak_points))
     return ret
 
 
 def convert_to_json(in_list):
-    print("converting to json")
-    return jsonify(list)
+    return jsonify(in_list)
