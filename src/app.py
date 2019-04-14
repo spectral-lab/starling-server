@@ -19,8 +19,6 @@ app = Flask(__name__)
 CORS(app)
 
 
-
-
 @app.route('/', methods=["POST"])
 def handler():
     line_continuity = 1
@@ -38,7 +36,7 @@ def handler():
         return check_result['msg']
     print('Success: Converted into ndarray')
     labels = segmentize(img, line_continuity, peak_level, background_level)
-    print('Success: Segmentized with ' + str(labels.max() + 1) + " segments")
+    print('Success: Segmentized with ' + str(labels.max() + 1) + " segments to extract peaks")
     peak_points = detect_peaks(img, labels)
     print('Success: Detected ' + str(len(peak_points)) + ' peaks')
     ret = make_response(convert_to_json(peak_points))

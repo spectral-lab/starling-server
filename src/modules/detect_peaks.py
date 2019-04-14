@@ -9,7 +9,7 @@ Return List is [row, column] pairs splitted into some chunks which represents a 
 
 def detect_peaks(spectrogram2d: np.ndarray, labels: np.ndarray) -> List[List[List[int]]]:
     peak_points = []
-    for i in range(labels.max()):
+    for i in range(labels.max() + 1):
         segment = labels == i
         one_chunk_of_points = find_peaks_in_segment(spectrogram2d, segment)
         peak_points.append(one_chunk_of_points)
