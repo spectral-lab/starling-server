@@ -4,6 +4,7 @@ from skimage import img_as_int, img_as_float
 from skimage.exposure import rescale_intensity
 import numpy as np
 from .. import format_check
+import os, random
 
 
 class TestFormatCheck(TestCase):
@@ -53,5 +54,12 @@ class TestFormatCheck(TestCase):
         specimen = np.random.normal(loc=0, scale=sigma, size=(4, 2))
         specimen = rescale_intensity(specimen, in_range=(specimen.min(), specimen.max()), out_range=(0., 1.))
         result = format_check(specimen)
+        self.assertTrue(result['is_ok'])
+        self.assertTrue(result['msg'] == "")
+
+    def test_real_data(self):
+        random_filename = random.choice(os.listdir("./src/modules/test/data/img_from_client"))
+        spectrogram_img = np.load('./src/modules/test/data/img_from_client/' + random_filename)
+        result = format_check(spectrogram_img)
         self.assertTrue(result['is_ok'])
         self.assertTrue(result['msg'] == "")
