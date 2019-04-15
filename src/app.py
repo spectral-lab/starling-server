@@ -41,7 +41,8 @@ def handler():
     peak_points = detect_peaks(img, labels)
     print('Success: Detected ' + str(len(peak_points)) + ' peaks')
     ret = make_response(convert_to_json(peak_points))
-    print('Success: Returns ' + str(peak_points))
+    print('Success: Returns')
+    print(str(peak_points))
     return ret
 
 
