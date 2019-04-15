@@ -1,12 +1,11 @@
 import numpy as np
 
-"""
-Checking if input data is correctly formatted as ndarray or not.
-Each item in ndarray is expected as float value with range 0. to 1.
-"""
-
 
 def format_check(input_data: any) -> dict:
+    """
+    Checking if input data is correctly formatted as ndarray or not.
+    Each item in ndarray is expected as float value with range 0. to 1.
+    """
     result = dict(is_ok=False, msg="")
     if type(input_data) != np.ndarray:
         result["msg"] = "Cannot convert into ndarray"
