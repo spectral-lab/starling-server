@@ -2,3 +2,5 @@ Flask
 flask_cors
 scikit-image == 0.14.2
 librosa
+numpy
+plotly
