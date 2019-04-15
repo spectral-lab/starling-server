@@ -4,7 +4,8 @@ from skimage import img_as_int, img_as_float
 from skimage.exposure import rescale_intensity
 import numpy as np
 from .. import format_check
-import os, random
+import os
+import random
 
 
 class TestFormatCheck(TestCase):

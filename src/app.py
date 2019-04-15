@@ -12,7 +12,7 @@ from flask import Flask, request, jsonify, make_response
 from flask_cors import CORS
 from modules import segmentize, format_check, detect_peaks
 from librosa.core import db_to_power
-
+import numpy as np
 print('Successfully imported')
 
 app = Flask(__name__)
@@ -29,6 +29,7 @@ def handler():
     uploaded_img = request.data
     image_data = Image.open(io.BytesIO(uploaded_img)).convert('L')
     img = img_as_float(image_data) / 255.
+    # np.save('./src/modules/test/data/img_from_client/era.npy', img)
     check_result = format_check(img)
     if not check_result["is_ok"]:
         print("bad format")
