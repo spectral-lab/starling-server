@@ -2,7 +2,7 @@ import numpy as np
 from .plot import plot
 
 
-def compute_marks(img: np.ndarray, proportion_of_zero: float = 0.9) -> np.ndarray:
+def compute_marks(img: np.ndarray, proportion_of_zero: float = 0.999) -> np.ndarray:
     """
     Mark hottest area as 2, coldest area as 1, and the other area as 0.
     """
@@ -12,8 +12,6 @@ def compute_marks(img: np.ndarray, proportion_of_zero: float = 0.9) -> np.ndarra
     markers = np.zeros(img.shape, dtype=np.uint)
     markers[is_cold] = 1
     markers[is_hot] = 2
-
-    plot(markers, "markers")
     return markers
 
 
