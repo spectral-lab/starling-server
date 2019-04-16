@@ -3,18 +3,24 @@ from typing import Callable
 from pdb import set_trace
 
 
-def apply_all_mocks(func) -> Callable[[str], any]:
+def iter_all_files(mock_dir: str) -> Callable[[str], any]:
     """
-    This should be used as decorator. ex: @apply_all_mocks
+    This should be used as decorator. ex: @iter_all_files
     """
 
-    def wrapper(file_or_dir_name):
-        dir_name = format_as_dir(file_or_dir_name)
-        files = os.listdir(dir_name)
-        for file in files:
-            func(file)
+    def decorator_iter_all_files(func: Callable[[str], any]) -> Callable[[str], any]:
+        def wrapper(*original_arg: str):
+            dir_name = format_as_dir(mock_dir)
+            files = os.listdir(dir_name)
+            for filename in files:
+                full_path = os.path.join(dir_name, filename)
+                if original_arg:
+                    print("file path of mock data is overrided by {}".format(full_path))
+                func(full_path)
 
-    return wrapper
+        return wrapper
+
+    return decorator_iter_all_files
 
 
 def format_as_dir(file_or_dir_name: str) -> str:
