@@ -1,18 +1,17 @@
 import numpy as np
-from .plot import plot
 
 
-def compute_marks(img: np.ndarray, proportion_of_zero: float = 0.999) -> np.ndarray:
+def compute_seeds(img: np.ndarray, proportion_of_zero: float = 0.999) -> np.ndarray:
     """
     Mark hottest area as 2, coldest area as 1, and the other area as 0.
     """
     is_cold = detect_cold_pixels(img, img.size * (1 - proportion_of_zero) / 2)
     is_hot = detect_hot_pixels(img, img.size * (1 - proportion_of_zero) / 2)
 
-    markers = np.zeros(img.shape, dtype=np.uint)
-    markers[is_cold] = 1
-    markers[is_hot] = 2
-    return markers
+    seed_markers = np.zeros(img.shape, dtype=np.uint)
+    seed_markers[is_cold] = 1
+    seed_markers[is_hot] = 2
+    return seed_markers
 
 
 def detect_cold_pixels(img: np.ndarray, target_num_pixels: int or float) -> np.array:

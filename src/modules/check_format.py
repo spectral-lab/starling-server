@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def format_check(input_data: any) -> dict:
+def check_format(input_data: any) -> dict:
     """
     Checking if input data is correctly formatted as ndarray or not.
     Each item in ndarray is expected as float value with range 0. to 1.
