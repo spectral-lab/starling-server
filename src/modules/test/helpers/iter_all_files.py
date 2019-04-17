@@ -13,6 +13,8 @@ def iter_all_files(mock_dir: str) -> Callable[[str], any]:
             dir_name = format_as_dir(mock_dir)
             files = os.listdir(dir_name)
             for filename in files:
+                if filename == ".DS_Store":
+                    continue
                 full_path = os.path.join(dir_name, filename)
                 if original_arg:
                     print("file path of mock data is overrided by {}".format(full_path))
