@@ -6,3 +6,5 @@ librosa
 numpy
 plotly
 pytz
+scikit-learn
+scipy
