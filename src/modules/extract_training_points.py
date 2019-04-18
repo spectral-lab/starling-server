@@ -1,7 +1,8 @@
 import numpy as np
 from typing import List
-from math import floor
+from math import floor, ceil
 from .export_graph import export_3d_scatter
+from pdb import set_trace
 
 
 def extract_training_points(segment_labels: np.ndarray, spectrogram2d: np.ndarray, ratio=0.5) -> List[np.ndarray]:
@@ -16,39 +17,45 @@ def extract_training_points(segment_labels: np.ndarray, spectrogram2d: np.ndarra
     if spectrogram2d.shape != segment_labels.shape:
         raise Exception('Input shape does not match')
 
-    list_of_points = make_list_of_points(segment_labels, spectrogram2d)
-    export_3d_scatter(list_of_points[0], "before_selection")
-    training_points = select_high_magnitude(list_of_points, ratio)
-    return training_points
-
-
-def make_list_of_points(segment_labels, spectrogram2d) -> List[np.ndarray]:
-    """
-    :return: List of ndarray. Each ndarray represents all the points in the corresponding segment.
-    """
-    list_of_points = []
+    selected_points = []
     for target_label in range(segment_labels.max() + 1):
+        masked_spectrogram = spectrogram2d * (segment_labels == target_label)
         time_indices, freq_indices = np.meshgrid(np.arange(segment_labels.shape[1]), np.arange(segment_labels.shape[0]))
-        target_times = time_indices[segment_labels == target_label]
-        target_freqs = freq_indices[segment_labels == target_label]
-        target_magnitudes = spectrogram2d[segment_labels == target_label]
-        list_of_points.append(np.column_stack([target_times, target_freqs, target_magnitudes]))
-    return list_of_points
+
+        should_select = audition_magnitude(masked_spectrogram, ratio)
+
+        selected_points.append(
+            np.column_stack([
+                time_indices[should_select],
+                freq_indices[should_select],
+                spectrogram2d[should_select]
+            ])
+        )
+
+    return selected_points
 
 
-def select_high_magnitude(points, ratio=0.5):
+def audition_magnitude(masked_spectrogram, ratio=0.5) -> np.ndarray:
     """
     After determining the threshold based on the ratio param,
-    make a list of points which have a higher magnitude than the threshold.
-    :param points:
+    make ndarray of bool which indicates if the magnitude is higher or not
+    :param masked_spectrogram:
     :param ratio: ratio to select.
-    :return:
     """
-    selected_points = []
-    for i in range(len(points)):
-        target_points = points[i]
-        num_points_to_select = floor(target_points.shape[0] * ratio)
-        magnitudes = target_points[:, 2]
-        threshold = np.sort(magnitudes)[-num_points_to_select-1]
-        selected_points.append(target_points[magnitudes > threshold, :])
-    return selected_points
+    times_to_check = np.unique(np.nonzero(masked_spectrogram)[1])
+    is_higher = np.zeros(masked_spectrogram.shape, dtype=bool)
+
+    for time_idx in times_to_check:
+        column_of_spectrogram = masked_spectrogram[:, time_idx]
+        magnitudes = np.unique(column_of_spectrogram)
+        num_nonzero = np.count_nonzero(magnitudes)
+        num_points_to_pass = ceil(num_nonzero * ratio)
+
+        # TODO: should write a test
+        # May cause problem
+        threshold = 0
+        if num_nonzero > 1:
+            threshold = np.sort(magnitudes)[-num_points_to_pass]
+        is_higher[column_of_spectrogram >= threshold, time_idx] = True
+
+    return is_higher
