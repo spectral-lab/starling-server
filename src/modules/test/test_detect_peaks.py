@@ -14,16 +14,16 @@ class TestDetectPeaks(TestCase):
     @skip("")
     def test_not_empty(self):
         spectrogram2d = np.load(__dirname__ + '/data/spectrogram2d/' + str(randint(0, 29)) + '.npy')
-        labels = np.load(__dirname__ + '/data/labels/' + str(randint(0, 29)) + '.npy')
-        peak_points = detect_peaks(spectrogram2d, labels)
+        segment_labels = np.load(__dirname__ + '/data/segment_labels/' + str(randint(0, 29)) + '.npy')
+        peak_points = detect_peaks(spectrogram2d, segment_labels)
         peak_points = flatten_list(peak_points)
         self.assertTrue(len(peak_points) > 0)
 
     @skip("")
     def test_type_check(self):
         spectrogram2d = np.load(__dirname__ + '/data/spectrogram2d/' + str(randint(0, 29)) + '.npy')
-        labels = np.load(__dirname__ + '/data/labels/' + str(randint(0, 29)) + '.npy')
-        peak_points = detect_peaks(spectrogram2d, labels)
+        segment_labels = np.load(__dirname__ + '/data/segment_labels/' + str(randint(0, 29)) + '.npy')
+        peak_points = detect_peaks(spectrogram2d, segment_labels)
         self.assertIsInstance(peak_points, List)
         self.assertIsInstance(peak_points[0], List)
         self.assertIsInstance(peak_points[0][0], List)
@@ -33,13 +33,13 @@ class TestDetectPeaks(TestCase):
                 for item in a_list:
                     self.assertIsInstance(item, int)
 
-    # @skip("")
+    @skip("")
     def test_with_real_data(self):
-        @iter_all_files(__dirname__ + '/data/labels')
+        @iter_all_files(__dirname__ + '/data/segment_labels')
         def check_reproducing_peak_points(file_path):
             spectrogram_img = np.load(os.path.join(__dirname__, 'data/spectrogram', os.path.basename(file_path)))
-            labels = np.load(file_path)
-            actual_peak_points = detect_peaks(spectrogram_img, labels)
+            segment_labels = np.load(file_path)
+            actual_peak_points = detect_peaks(spectrogram_img, segment_labels)
             # np.save(os.path.join(__dirname__, "data/peak_points", os.path.basename(file_path)), actual_peak_points)
             expected_peak_points = np.load(os.path.join(__dirname__, "data/peak_points", os.path.basename(file_path)))
             self.assertTrue(np.array_equal(actual_peak_points, expected_peak_points))

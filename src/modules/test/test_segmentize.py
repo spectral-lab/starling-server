@@ -30,10 +30,10 @@ class TestSegmentize(TestCase):
             specimen = rescale_intensity(specimen, in_range=(specimen.min(), specimen.max()), out_range=(0., 1.))
             line_continuity = 0
             seed_markers = compute_seeds(specimen)
-            labels = segmentize(specimen, seed_markers, line_continuity)
-            actual_num_segments = labels.max() + 1
+            segment_labels = segmentize(specimen, seed_markers, line_continuity)
+            actual_num_segments = segment_labels.max() + 1
             print(specimen)
-            print(labels)
+            print(segment_labels)
             print(expected_num_segments)
             print(actual_num_segments)
             if actual_num_segments == expected_num_segments:
@@ -52,8 +52,8 @@ class TestSegmentize(TestCase):
         specimen = rescale_intensity(specimen, in_range=(specimen.min(), specimen.max()), out_range=(0., 1.))
         line_continuity = 2
         seed_markers = compute_seeds(specimen)
-        labels = segmentize(specimen, line_continuity, seed_markers)
-        number_of_segments = labels.max() + 1
+        segment_labels = segmentize(specimen, line_continuity, seed_markers)
+        number_of_segments = segment_labels.max() + 1
         self.assertTrue(number_of_segments > 0)
 
     # @skip("")
@@ -63,8 +63,8 @@ class TestSegmentize(TestCase):
             spectrogram_img = np.load(os.path.join(__dirname__, "data/spectrogram", os.path.basename(file_path)))
             seed_markers = np.load(file_path)
             actual_labels = segmentize(spectrogram_img, seed_markers)
-            # np.save(os.path.join(__dirname__, "data/labels", os.path.basename(file_path)), actual_labels)
-            expected_labels = np.load(os.path.join(__dirname__, "data/labels", os.path.basename(file_path)))
+            # np.save(os.path.join(__dirname__, "data/segment_labels", os.path.basename(file_path)), actual_labels)
+            expected_labels = np.load(os.path.join(__dirname__, "data/segment_labels", os.path.basename(file_path)))
             self.assertTrue(np.array_equal(actual_labels, expected_labels))
 
         check_reproducing_labels()

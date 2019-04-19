@@ -32,13 +32,13 @@ class TestExportGraph(TestCase):
 
     # @skip("Takes a lot of time to generate graphs")
     def test_export_segment_labels(self):
-        @iter_all_files(__dirname__ + '/data/labels')
-        def export_labels(file_path: str):
-            labels = np.load(file_path)
+        @iter_all_files(__dirname__ + '/data/segment_labels')
+        def export_segment_labels(file_path: str):
+            segment_labels = np.load(file_path)
             title = os.path.splitext(os.path.basename(file_path))[0]
-            export_graph(labels, "labels_" + title)
+            export_graph(segment_labels, "segment_labels_" + title)
 
-        export_labels()
+        export_segment_labels()
 
     def test_export_peak_points(self):
         @iter_all_files(__dirname__ + '/data/peak_points')

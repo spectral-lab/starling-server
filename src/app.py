@@ -12,11 +12,11 @@ from flask import Flask, request, jsonify, make_response
 from flask_cors import CORS
 import datetime
 import pytz
+from pdb import set_trace
 
 # noinspection PyPackageRequirements,PyUnresolvedReferences
-from modules import segmentize, check_format, detect_peaks, \
-                     compute_seeds, export_graph, format_as_2d_array, feature_lines
-
+from modules import segmentize, check_format, compute_seeds, export_graph, convert_to_json, \
+                     format_as_2d_array, compute_feature_lines, extract_training_points
 
 print('Success: Imported modules')
 
@@ -28,16 +28,17 @@ line_continuity = 1  # This will be taken from the request from client
 @app.route('/', methods=["POST"])
 def handler():
     def export_intermediate_data_as_graph():
-        peaks_2d = format_as_2d_array(peak_points, spectrogram.shape)
         now = datetime.datetime.now(pytz.timezone('Asia/Tokyo'))
         export_graph(spectrogram,
                      "spectrogram_" + now.strftime("%Y%m%d_%H%M"))  # ex: spectrogram_20190417_0910
         export_graph(markers, "markers_" + now.strftime("%Y%m%d_%H%M"))
         export_graph(segment_labels, "segment_labels_" + now.strftime("%Y%m%d_%H%M"))
-        export_graph(peaks_2d, "peak_points_" + now.strftime("%Y%m%d_%H%M"))
         print("Success: Exported graphs")
+
     print('Success: Got request')
     uploaded_img = request.data
+    orig_img = Image.open(io.BytesIO(uploaded_img))  # for debugging
+    orig_img.save("./output/img/img_from_client.png")  # for debugging
     image_data = Image.open(io.BytesIO(uploaded_img)).convert('L')
     spectrogram = img_as_float(image_data) / 255.
     check_result = check_format(spectrogram)
@@ -49,13 +50,13 @@ def handler():
     markers = compute_seeds(spectrogram)
     segment_labels = segmentize(spectrogram, markers, line_continuity)
     print('Success: Segmentized with ' + str(segment_labels.max() + 1) + " segments to extract peaks")
-    peak_points = detect_peaks(spectrogram, segment_labels)
-    print('Success: Detected ' + str(len(peak_points)) + ' peaks')
-    ret = make_response(jsonify(peak_points))
+    training_points = extract_training_points(segment_labels, spectrogram, ratio=0.3)
+    feature_lines = compute_feature_lines(training_points, degree=6)
+    print('Success: Compute feature lines')
+    ret = make_response(convert_to_json(feature_lines))
 
     export_intermediate_data_as_graph()  # Optional
 
     print('Success: Returns')
-    print(str(peak_points))
+    # print(feature_lines)  # Optional
     return ret
-
