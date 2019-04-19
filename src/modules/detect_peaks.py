@@ -2,17 +2,17 @@ import numpy as np
 from typing import List
 
 
-def detect_peaks(spectrogram2d: np.ndarray, labels: np.ndarray) -> List[List[List[int]]]:
+def detect_peaks(spectrogram2d: np.ndarray, segment_labels: np.ndarray) -> List[List[List[int]]]:
     """
     Detect Peaks from segments of spectrogram.
 
     :param spectrogram2d:
-    :param labels: labels which indicates background as -1 and foreground as index starts from 0
+    :param segment_labels: labels which indicates background as -1 and foreground as index starts from 0
     :return: [row, column] pairs splitted into some chunks which represents a peak line.
     """
     peak_points = []
-    for target_label in range(labels.max() + 1):
-        target_area: np.ndarray = labels == target_label
+    for target_label in range(segment_labels.max() + 1):
+        target_area: np.ndarray = segment_labels == target_label
         one_chunk_of_points = find_peaks_in_segment(spectrogram2d, target_area)
         peak_points.append(one_chunk_of_points)
     return peak_points
