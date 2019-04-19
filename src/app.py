@@ -37,8 +37,7 @@ def handler():
 
     print('Success: Got request')
     uploaded_img = request.data
-    orig_img = Image.open(io.BytesIO(uploaded_img))  # for debugging
-    orig_img.save("./output/img/img_from_client.png")  # for debugging
+    Image.open(io.BytesIO(uploaded_img)).save("./output/img/img_from_client.png")  # Optional. For debugging
     image_data = Image.open(io.BytesIO(uploaded_img)).convert('L')
     spectrogram = img_as_float(image_data) / 255.
     check_result = check_format(spectrogram)
