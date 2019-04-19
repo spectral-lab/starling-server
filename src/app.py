@@ -11,9 +11,12 @@ import io
 from flask import Flask, request, jsonify, make_response
 from flask_cors import CORS
 import datetime
-# noinspection PyPackageRequirements,PyUnresolvedReferences
-from modules import segmentize, check_format, detect_peaks, compute_marks, export_graph, format_as_2d_array
 import pytz
+
+# noinspection PyPackageRequirements,PyUnresolvedReferences
+from modules import segmentize, check_format, detect_peaks, \
+                     compute_seeds, export_graph, format_as_2d_array, feature_lines
+
 
 print('Success: Imported modules')
 
@@ -24,16 +27,15 @@ line_continuity = 1  # This will be taken from the request from client
 
 @app.route('/', methods=["POST"])
 def handler():
-    def export_intermediate_data():
+    def export_intermediate_data_as_graph():
         peaks_2d = format_as_2d_array(peak_points, spectrogram.shape)
         now = datetime.datetime.now(pytz.timezone('Asia/Tokyo'))
         export_graph(spectrogram,
                      "spectrogram_" + now.strftime("%Y%m%d_%H%M"))  # ex: spectrogram_20190417_0910
         export_graph(markers, "markers_" + now.strftime("%Y%m%d_%H%M"))
-        export_graph(labels, "labels_" + now.strftime("%Y%m%d_%H%M"))
+        export_graph(segment_labels, "segment_labels_" + now.strftime("%Y%m%d_%H%M"))
         export_graph(peaks_2d, "peak_points_" + now.strftime("%Y%m%d_%H%M"))
         print("Success: Exported graphs")
-
     print('Success: Got request')
     uploaded_img = request.data
     image_data = Image.open(io.BytesIO(uploaded_img)).convert('L')
@@ -44,14 +46,14 @@ def handler():
         print(check_result['msg'])
         return check_result['msg']
     print('Success: Converted into ndarray')
-    markers = compute_marks(spectrogram)
-    labels = segmentize(spectrogram, markers, line_continuity)
-    print('Success: Segmentized with ' + str(labels.max() + 1) + " segments to extract peaks")
-    peak_points = detect_peaks(spectrogram, labels)
+    markers = compute_seeds(spectrogram)
+    segment_labels = segmentize(spectrogram, markers, line_continuity)
+    print('Success: Segmentized with ' + str(segment_labels.max() + 1) + " segments to extract peaks")
+    peak_points = detect_peaks(spectrogram, segment_labels)
     print('Success: Detected ' + str(len(peak_points)) + ' peaks')
     ret = make_response(jsonify(peak_points))
 
-    export_intermediate_data()  # Optional
+    export_intermediate_data_as_graph()  # Optional
 
     print('Success: Returns')
     print(str(peak_points))
