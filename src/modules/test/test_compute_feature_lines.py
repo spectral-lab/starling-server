@@ -22,7 +22,6 @@ class TestComputeFeatureLines(TestCase):
             export_graph(segment_labels, "segment_labels")
             training_points = extract_training_points(segment_labels, spectrogram_img, ratio=0.3)
             actual_feature_lines = compute_feature_lines(training_points, degree=3)
-            set_trace()
             # np.save(os.path.join(__dirname__, "data/feature_lines", os.path.basename(file_path)), actual_feature_lines)
 
         check_reproducing_feature_lines(__dirname__ + '/data/segment_labels/dinasaur.npy')
