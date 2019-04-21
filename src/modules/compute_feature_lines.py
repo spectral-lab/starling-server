@@ -3,6 +3,7 @@ from typing import List, Callable
 from sklearn.preprocessing import PolynomialFeatures
 from sklearn.linear_model import LinearRegression
 from sklearn.pipeline import Pipeline
+from pdb import set_trace
 
 
 def compute_feature_lines(training_points: List[np.ndarray], degree: int = 0) -> List[np.ndarray]:
@@ -14,12 +15,15 @@ def compute_feature_lines(training_points: List[np.ndarray], degree: int = 0) ->
     list_of_feature_lines = []
     for i in range(len(training_points)):
         target_training_points = training_points[i]
+        if target_training_points.shape[0] < 1:
+            raise Exception('No training points')
         x = target_training_points[:, 0]
         coefs_y = polynomial_regression(x, target_training_points[:, 1], degree)
         coefs_z = polynomial_regression(x, target_training_points[:, 2], degree)
         calc_y: Callable = coefs_to_formula(coefs_y)
         calc_z: Callable = coefs_to_formula(coefs_z)
-        list_of_feature_lines.append(np.column_stack([x, calc_y(x), calc_z(x)]))
+        x_seq = np.sort(np.unique(x))
+        list_of_feature_lines.append(np.column_stack([x_seq, calc_y(x_seq), calc_z(x_seq)]))
     return list_of_feature_lines
 
 
