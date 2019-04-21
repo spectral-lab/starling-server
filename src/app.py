@@ -34,9 +34,13 @@ def handler():
         export_graph(markers, "markers_" + now.strftime("%Y%m%d_%H%M"))
         export_graph(segment_labels, "segment_labels_" + now.strftime("%Y%m%d_%H%M"))
         print("Success: Exported graphs")
-
     print('Success: Got request')
-    uploaded_img = request.data
+
+    uploaded_img = request.files["pngImage"].read()
+    if "line_continuity" in request.form:
+        line_continuity = int(request.form['line_continuity'])
+        print('line_continuity', line_continuity)
+
     Image.open(io.BytesIO(uploaded_img)).save("./output/img/img_from_client.png")  # Optional. For debugging
     image_data = Image.open(io.BytesIO(uploaded_img)).convert('L')
     spectrogram = img_as_float(image_data) / 255.
