@@ -56,7 +56,7 @@ class TestSegmentize(TestCase):
         number_of_segments = segment_labels.max() + 1
         self.assertTrue(number_of_segments > 0)
 
-    # @skip("")
+    @skip("")
     def test_with_real_data(self):
         @iter_all_files(__dirname__ + '/data/seed_markers')
         def check_reproducing_labels(file_path: str):

@@ -72,15 +72,16 @@ def export_3d_scatter(points: np.ndarray, title: str, out_dir: str = './output/g
     py.plot(go.Figure(data, layout), filename=path.join(out_dir, title + '.html'))
 
 
-def format_as_2d_array(peak_points: List[List[List[int]]], shape: Tuple) -> np.ndarray:
+def feature_lines_to_image(feature_lines: List[np.ndarray], shape: Tuple) -> np.ndarray:
     """
     Returns 2d numpy array which can be passed into export_graph function
-    :param peak_points:
-    :param shape: shape of output 2d array
-    :return: peak indices which indicates background as -1 and peak lines as index starts from 0
+    :return: Each element is a number which indicates background as -1 and feature line as index starts from 0.
     """
-    peak_indices = np.zeros(shape) - 1
-    for chunk_idx in range(len(peak_points)):
-        peak_indices[tuple(map(tuple, np.array(peak_points[chunk_idx]).T))] = chunk_idx
+    ret_img = np.zeros(shape) - 1
+    for line_idx, line in enumerate(feature_lines):
+        for i in range(line.shape[0]):
+            row = int(round(line[i, 1]))
+            column = int(round(line[i, 0]))
+            ret_img[row, column] = line_idx
 
-    return peak_indices
+    return ret_img

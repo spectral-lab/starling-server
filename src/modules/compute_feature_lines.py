@@ -10,7 +10,7 @@ def compute_feature_lines(training_points: List[np.ndarray], degree: int = 0) ->
     """
     :param training_points:
     :param degree:
-    :return: [row, column] pairs splitted into some chunks which represents a peak line.
+    :return: [timeIdx, freqIdx , magnitude ] pairs splitted into some chunks which represents a peak line.
     """
     list_of_feature_lines = []
     for i in range(len(training_points)):

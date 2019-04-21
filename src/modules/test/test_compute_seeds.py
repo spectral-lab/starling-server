@@ -10,7 +10,7 @@ from pdb import set_trace
 __dirname__ = os.path.dirname(os.path.realpath(__file__))
 
 
-class TestComputeMarks(TestCase):
+class TestComputeSeeds(TestCase):
     # @skip("")
     def test_with_9_items(self):
         mock_array = np.array(
@@ -77,7 +77,7 @@ class TestComputeMarks(TestCase):
             print(seed_markers)
         self.assertTrue(is_acceptable)
 
-    # @skip("")
+    @skip("")
     def test_with_real_data(self):
         @iter_all_files(__dirname__ + '/data/spectrogram')
         def check_reproducing_seed_markers(file_path):
