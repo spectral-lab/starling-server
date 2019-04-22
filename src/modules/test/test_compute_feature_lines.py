@@ -10,7 +10,7 @@ __dirname__ = os.path.dirname(os.path.realpath(__file__))
 
 
 class TestComputeFeatureLines(TestCase):
-    # @skip("")
+    @skip("")
     def test_with_real_data(self):
         # @iter_all_files(__dirname__ + '/data/segment_labels')
         def check_reproducing_feature_lines(file_path):
