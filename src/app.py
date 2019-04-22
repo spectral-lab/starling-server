@@ -37,8 +37,8 @@ def handler():
     now = datetime.datetime.now(pytz.timezone('Asia/Tokyo'))
     print('Success: Got request')
     uploaded_img = request.data
-    Image.open(io.BytesIO(uploaded_img)).save(
-        "./output/img/img_from_client" + now.strftime("%Y%m%d_%H%M") + ".png")  # Optional. For debugging
+    # Image.open(io.BytesIO(uploaded_img)).save(
+    #     "./output/img/img_from_client" + now.strftime("%Y%m%d_%H%M") + ".png")  # Optional. For debugging
     image_data = Image.open(io.BytesIO(uploaded_img)).convert('L')
     spectrogram = img_as_float(image_data) / 255.
     # np.save(
@@ -60,7 +60,7 @@ def handler():
     print('Success: Compute feature lines')
     ret = make_response(convert_to_json(feature_lines))
 
-    export_intermediate_data_as_graph()  # Optional
+    # export_intermediate_data_as_graph()  # Optional
 
     print('Success: Returns')
     # print(feature_lines)  # Optional
