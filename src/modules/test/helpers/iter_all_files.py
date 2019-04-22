@@ -5,7 +5,7 @@ from pdb import set_trace
 
 def iter_all_files(mock_dir: str) -> Callable[[str], any]:
     """
-    This should be used as decorator. ex: @iter_all_files
+    This should be used as decorator. Pass full filepath to decorated function. ex: @iter_all_files("path/to/mock/dir")
     """
 
     def decorator_iter_all_files(func: Callable[[str], any]) -> Callable[[str], any]:
