@@ -13,17 +13,16 @@ def compute_feature_lines(training_points: List[np.ndarray], degree: int = 0) ->
     :return: [timeIdx, freqIdx , magnitude ] pairs splitted into some chunks which represents a peak line.
     """
     list_of_feature_lines = []
-    for i in range(len(training_points)):
-        target_training_points = training_points[i]
+    for target_training_points in training_points:
         if target_training_points.shape[0] < 1:
             raise Exception('No training points')
-        x = target_training_points[:, 0]
-        coefs_y = polynomial_regression(x, target_training_points[:, 1], degree)
-        coefs_z = polynomial_regression(x, target_training_points[:, 2], degree)
+        training_x = target_training_points[:, 0]
+        coefs_y = polynomial_regression(training_x, target_training_points[:, 1], degree)
         calc_y: Callable = coefs_to_formula(coefs_y)
-        calc_z: Callable = coefs_to_formula(coefs_z)
-        x_seq = np.sort(np.unique(x))
-        list_of_feature_lines.append(np.column_stack([x_seq, calc_y(x_seq), calc_z(x_seq)]))
+        x = np.sort(np.unique(training_x))
+        y = calc_y(x)
+        z = nearest_magnitude(x, y, target_training_points)
+        list_of_feature_lines.append(np.column_stack([x, y, z]))
     return list_of_feature_lines
 
 
@@ -43,3 +42,15 @@ def coefs_to_formula(coefs: np.ndarray) -> Callable[[np.ndarray], np.ndarray]:
         return y
 
     return ret_formula
+
+
+def nearest_magnitude(times, freqs, points):
+    magnitudes = np.zeros(times.shape)
+    for i, time in enumerate(times):
+        target_points = points[points[:, 0] == time, :]
+        if target_points.size < 1:
+            continue
+        freq = freqs[i]
+        diffs = abs(target_points[:, 1] - freq)
+        magnitudes[i] = target_points[diffs == diffs.min(), 2][0]
+    return magnitudes

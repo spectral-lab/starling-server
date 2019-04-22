@@ -1,4 +1,4 @@
-from .compute_feature_lines import compute_feature_lines, polynomial_regression, coefs_to_formula
+from .compute_feature_lines import compute_feature_lines, polynomial_regression, coefs_to_formula, nearest_magnitude
 from .segmentize import segmentize
 from .check_format import check_format
 from .export_graph import export_graph, export_3d_scatter, feature_lines_to_image

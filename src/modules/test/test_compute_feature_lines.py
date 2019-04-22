@@ -1,5 +1,6 @@
 from unittest import TestCase, skip
-from .. import compute_feature_lines, polynomial_regression, coefs_to_formula, export_graph, extract_training_points
+from .. import compute_feature_lines, polynomial_regression, coefs_to_formula, export_graph, \
+               extract_training_points, nearest_magnitude
 from typing import List, Callable
 from .helpers import iter_all_files
 import os
@@ -58,4 +59,25 @@ class TestComputeFeatureLines(TestCase):
             print(actual_y)
             print("expected Y: ")
             print(expected_y)
+        self.assertTrue(is_acceptable)
+
+    # @skip("")
+    def test_nearest_magnitude(self):
+        times = np.array([0.1, 0.2, 0.3, 0.4])
+        freqs = np.array([100.3, 200.2, 300.6, 400.7])
+        points = np.array([[0.1, 100, 1.1],
+                           [0.1, 101, 2.2],
+                           [0.1, 102, 3.3],
+                           [0.2, 100, 1.2],
+                           [0.2, 200, 2.3],
+                           [0.3, 100, 3.6]])
+        actual_magnitudes = nearest_magnitude(times, freqs, points)
+        expected_magnitudes = [1.1, 2.3, 3.6, 0]
+        is_acceptable = np.array_equal(actual_magnitudes, expected_magnitudes)
+        if not is_acceptable:
+            print()
+            print("actual magnitudes: ")
+            print(actual_magnitudes)
+            print("expected magnitudes: ")
+            print(expected_magnitudes)
         self.assertTrue(is_acceptable)
