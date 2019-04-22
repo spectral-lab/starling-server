@@ -10,10 +10,12 @@ import os
 
 __dirname__ = os.path.dirname(__file__)
 
-line_continuity = 0  # This will be taken from the request from client
-proportion_of_hottest_area = 0.01   # This will be taken from the request from client
-proportion_of_coldest_area = 0.5   # This will be taken from the request from client
-degree = 6  # This will be taken from the request from client
+line_continuity = 0
+sensitivity = 5  # This will be taken from the request from client
+proportion_of_hottest_area = 4 ** (sensitivity * 0.4) / 5000
+proportion_of_coldest_area = 0.5
+degree = 1  # This will be taken from the request from client
+
 
 class TestOverallProcess(TestCase):
     def test_overall_process(self):
@@ -27,6 +29,7 @@ class TestOverallProcess(TestCase):
                 export_graph(segment_labels, filename + "_segment_labels")
                 export_graph(feature_lines_to_image(feature_lines, spectrogram.shape), filename + "_feature_lines")
 
+            print('Now testing with ' + filepath)
             spectrogram = np.load(filepath)
             check_result = check_format(spectrogram)
             if not check_result["is_ok"]:

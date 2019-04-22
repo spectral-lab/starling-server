@@ -6,6 +6,9 @@ import numpy as np
 from .. import check_format
 import os
 import random
+from .helpers import iter_all_files
+
+__dirname__ = os.path.dirname(os.path.realpath(__file__))
 
 
 class TestFormatCheck(TestCase):
@@ -59,8 +62,13 @@ class TestFormatCheck(TestCase):
         self.assertTrue(result['msg'] == "")
 
     def test_real_data(self):
-        random_filename = random.choice(os.listdir("./src/modules/test/data/spectrogram"))
-        spectrogram_img = np.load('./src/modules/test/data/spectrogram/' + random_filename)
-        result = check_format(spectrogram_img)
-        self.assertTrue(result['is_ok'])
-        self.assertTrue(result['msg'] == "")
+        @iter_all_files(__dirname__ + "/data/spectrogram")
+        def main(filepath):
+            spectrogram_img = np.load(filepath)
+            result = check_format(spectrogram_img)
+            self.assertTrue(result['is_ok'])
+            self.assertTrue(result['msg'] == "")
+
+        main()
+
+
