@@ -23,11 +23,6 @@ print('Success: Imported modules')
 app = Flask(__name__)
 CORS(app)
 
-line_continuity = 0  # This will be taken from the request from client
-proportion_of_hottest_area = 0.01  # This will be taken from the request from client
-proportion_of_coldest_area = 0.5  # This will be taken from the request from client
-degree = 6  # This will be taken from the request from client
-
 
 @app.route('/', methods=["POST"])
 def handler():
@@ -41,8 +36,23 @@ def handler():
 
     now = datetime.datetime.now(pytz.timezone('Asia/Tokyo'))
     formatted_now = now.strftime("%Y%m%d_%H%M")
+
     print('Success: Got request')
-    uploaded_img = request.data
+    uploaded_img = request.files["pngImage"].read()
+
+    # Init params
+    line_continuity = 0
+    sensitivity = 5
+    degree = 1
+    if "sensitivity" in request.form:
+        sensitivity = int(request.form['sensitivity'])
+        print(':param sensitivity: ', sensitivity)
+    if "degree" in request.form:
+        degree = int(request.form['degree'])
+        print(':param degree: ', degree)
+    proportion_of_hottest_area = 4 ** (sensitivity * 0.4) / 5000
+    proportion_of_coldest_area = 0.5
+
     # Image.open(io.BytesIO(uploaded_img)).save(
     #     "./output/img/img_from_client" + formatted_now + ".png")  # Optional. For debugging
     image_data = Image.open(io.BytesIO(uploaded_img)).convert('L')
