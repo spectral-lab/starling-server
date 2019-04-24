@@ -28,10 +28,11 @@ CORS(app)
 def handler():
     def export_intermediate_data_as_graph():
         export_graph(spectrogram,
-                     "spectrogram_" + formatted_now)  # ex: spectrogram_20190417_0910
-        export_graph(markers, "markers_" + formatted_now)
-        export_graph(segment_labels, "segment_labels_" + formatted_now)
-        export_graph(feature_lines_to_image(feature_lines, spectrogram.shape), "feature_lines_" + formatted_now)
+                     formatted_now + "_spectrogram")  # ex: spectrogram_20190417_0910
+        export_graph(markers, formatted_now + "_markers")
+        export_graph(segment_labels, formatted_now + "_segment_labels")
+        export_graph(feature_lines_to_image(training_points, spectrogram.shape), formatted_now + "_training_points")
+        export_graph(feature_lines_to_image(feature_lines, spectrogram.shape), formatted_now + "_feature_lines")
         print("Success: Exported graphs")
 
     now = datetime.datetime.now(pytz.timezone('Asia/Tokyo'))
@@ -39,6 +40,7 @@ def handler():
 
     print('Success: Got request')
     uploaded_img = request.files["pngImage"].read()
+    # uploaded_img = request.data
 
     # Init params
     line_continuity = 0
@@ -50,8 +52,8 @@ def handler():
     if "degree" in request.form:
         degree = int(request.form['degree'])
         print(':param degree: ', degree)
-    proportion_of_hottest_area = 4 ** (sensitivity * 0.4) / 5000
-    proportion_of_coldest_area = 0.5
+    proportion_of_hottest_area = 10 ** -4.3 * sensitivity ** 3.3
+    proportion_of_coldest_area = 0.8
 
     # Image.open(io.BytesIO(uploaded_img)).save(
     #     "./output/img/img_from_client" + formatted_now + ".png")  # Optional. For debugging
@@ -71,7 +73,7 @@ def handler():
     markers = compute_seeds(spectrogram, proportion_of_hottest_area, proportion_of_coldest_area)
     segment_labels = segmentize(spectrogram, markers, line_continuity)
     print('Success: Segmentized with ' + str(segment_labels.max() + 1) + " segments to extract peaks")
-    training_points = extract_training_points(segment_labels, spectrogram, ratio=0.3)
+    training_points = extract_training_points(segment_labels, spectrogram, pass_rate=0.3)
     feature_lines = compute_feature_lines(training_points, degree)
     print('Success: Compute feature lines')
     ret = make_response(convert_to_json(feature_lines))
