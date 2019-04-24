@@ -29,7 +29,7 @@ class TestOverallProcess(TestCase):
                 export_graph(segment_labels, filename + "_segment_labels")
                 export_graph(feature_lines_to_image(feature_lines, spectrogram.shape), filename + "_feature_lines")
 
-            print('Now testing with ' + filepath)
+            # print('Now testing with ' + filepath)
             spectrogram = np.load(filepath)
             check_result = check_format(spectrogram)
             if not check_result["is_ok"]:
@@ -38,7 +38,7 @@ class TestOverallProcess(TestCase):
                 return check_result['msg']
             markers = compute_seeds(spectrogram, proportion_of_hottest_area, proportion_of_coldest_area)
             segment_labels = segmentize(spectrogram, markers, line_continuity)
-            training_points = extract_training_points(segment_labels, spectrogram, ratio=0.3)
+            training_points = extract_training_points(segment_labels, spectrogram, pass_rate=0.3)
             feature_lines = compute_feature_lines(training_points, degree)
 
             export_intermediate_data_as_graph()  # Optional

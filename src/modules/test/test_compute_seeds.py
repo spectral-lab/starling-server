@@ -53,7 +53,7 @@ class TestComputeSeeds(TestCase):
         actual_proportion = seed_markers[seed_markers == 2].size / seed_markers.size
 
         # assert
-        is_acceptable = expected_proportion * 0.8 < actual_proportion < expected_proportion * 1.2
+        is_acceptable = expected_proportion * 0.6 < actual_proportion < expected_proportion * 1.4
         if not is_acceptable:
             print()
             print("actual proportion:", actual_proportion)
