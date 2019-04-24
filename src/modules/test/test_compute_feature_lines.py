@@ -1,6 +1,6 @@
 from unittest import TestCase, skip
 from .. import compute_feature_lines, polynomial_regression, coefs_to_formula, export_graph, \
-               extract_training_points, nearest_magnitude
+               extract_training_points, nearest_magnitude, feature_lines_to_image
 from typing import List, Callable
 from .helpers import iter_all_files
 import os
@@ -11,21 +11,23 @@ __dirname__ = os.path.dirname(os.path.realpath(__file__))
 
 
 class TestComputeFeatureLines(TestCase):
-    @skip("")
+    # @skip("")
     def test_with_real_data(self):
-        # @iter_all_files(__dirname__ + '/data/segment_labels')
-        def check_reproducing_feature_lines(file_path):
-            print()
-            print("checking " + file_path)
-            spectrogram_img = np.load(os.path.join(__dirname__, 'data/spectrogram', os.path.basename(file_path)))
+        @iter_all_files(__dirname__ + '/data/segment_labels')
+        def main(file_path):
+            # print()
+            # print("checking " + file_path)
             segment_labels = np.load(file_path)
+            spectrogram_img = np.random.rand(*segment_labels.shape)
             export_graph(spectrogram_img, "spectrogram")
             export_graph(segment_labels, "segment_labels")
-            training_points = extract_training_points(segment_labels, spectrogram_img, ratio=0.3)
-            actual_feature_lines = compute_feature_lines(training_points, degree=3)
+            training_points = extract_training_points(segment_labels, spectrogram_img, pass_rate=0.3)
+            export_graph(feature_lines_to_image(training_points, spectrogram_img.shape), "training_points")
+            feature_lines = compute_feature_lines(training_points, degree=3)
+            export_graph(feature_lines_to_image(feature_lines, spectrogram_img.shape), "feature_lines")
             # np.save(os.path.join(__dirname__, "data/feature_lines", os.path.basename(file_path)), actual_feature_lines)
 
-        check_reproducing_feature_lines(__dirname__ + '/data/segment_labels/dinasaur.npy')
+        main()
 
     # @skip("")
     def test_polynomial_regression(self):
