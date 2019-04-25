@@ -45,7 +45,7 @@ def handler():
     # Init params
     line_continuity = 0
     sensitivity = 5
-    degree = 1
+    degree = 0
     if "sensitivity" in request.form:
         sensitivity = int(request.form['sensitivity'])
         print(':param sensitivity: ', sensitivity)
