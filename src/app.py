@@ -78,7 +78,7 @@ def handler():
     print('Success: Compute feature lines')
     ret = make_response(convert_to_json(feature_lines))
 
-    export_intermediate_data_as_graph()  # Optional
+    # export_intermediate_data_as_graph()  # Optional
 
     print('Success: Returns')
     # print(feature_lines)  # Optional
