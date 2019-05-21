@@ -1,10 +1,10 @@
-# segment_spectrogram
+# starling-server
 
-# For Development
+## For Development
 
 Create Image:
 ```shell
-cd segment_spectrogram
+cd starling-server
 docker build -t starling-server .
 ```
 
