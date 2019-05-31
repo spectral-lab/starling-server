@@ -1,5 +1,5 @@
 # starling-server
-## This repository is now deprecated. It has been moved to https://github.com/spectral-lab/spectral-lab
+
 ## For Development
 
 Create Image:
